@@ -1,2 +1,4 @@
-# net simulatior
-Net simulator. Includes several iterative methods for time integration.
+# Net simulator
+
+- Structural deformation solver for a (up until now) square net.
+- Includes several iterative methods for time integration.
