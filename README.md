@@ -1,2 +1,2 @@
-# cloth
-Cloth (net) simulator. Includes various iterative methods for timeintegration.
+# net simulatior
+Net simulator. Includes several iterative methods for time integration.
