@@ -172,20 +172,18 @@ def a(x,y,z,vx,vy,vz):
     # acceleration due to interaction with neighbors
     ax,ay,az=add_forces(F1,F2,F3,F4)
     # add drag and lift forces
-    """
-    Fdx,Fdy,Fdz,Flx,Fly,Flz=hydrodynamic_force(x,y,z,vx,vy,vz)
-    ax+=Fdx+Flx
-    ay+=Fdy+Fly
-    az+=Fdz+Flz
-    """
+    if globals.add_hydroForce:
+        Fdx,Fdy,Fdz,Flx,Fly,Flz=hydrodynamic_force(x,y,z,vx,vy,vz)
+        ax+=Fdx+Flx
+        ay+=Fdy+Fly
+        az+=Fdz+Flz
     # divide by mass
     ax=ax/m
     ay=ay/m
     az=az/m
     # add gravitational acceleration
-    """
-    ay+=-9.8
-    """
+    if globals.add_gravityForce:
+        ay+=-9.8
     # constraints
     # ADD CONSTRAINTS HERE
     # https://en.wikipedia.org/wiki/Verlet_integration#Constraints

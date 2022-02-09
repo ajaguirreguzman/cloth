@@ -7,12 +7,15 @@ import numpy as np
 
 def initialize(): 
     global see_elasticity,see_net,see_hmap,method
+    global add_hydroForce,add_gravityForce
     global dt,tmax,N1,N2,netY,netZ,model,dw,theta
     global rho,ux,uy,uz
     global ly,lz,L,dW,c,k1,k2,m
     see_elasticity=0
     see_net=0
     see_hmap=0
+    add_hydroForce=0
+    add_gravityForce=1
     method=2                # 1 forward Euler, 2 semi-implicit Euler, 3 backward (implicit) Euler,
                             # 4 midpoint, 5 RK2, 6 RK4, 7 Verlet, 8 velocity Verlet, 9 Yoshida
     dt=1e-3                 # [s] time step
