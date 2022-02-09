@@ -157,8 +157,7 @@ if __name__ == "__main__":
                 axs1.plot_wireframe(x, y, z, rstride=1, cstride=1, color='gray')
                 if see_hmap: hmap.set_data(reference_area(x,y,z)[1])
                 plt.pause(0.01)
-                #if mkmovie==1:
-                writer.grab_frame()
+                if globals.mk_movie: writer.grab_frame()
 
             maxChange=calc_posChange(x,y,z,x0,y0,z0)    # change in position
             K,V=calc_energy(x,y,z,vx,vy,vz)             # kinetic and potential energy

@@ -7,6 +7,7 @@ import numpy as np
 
 def initialize(): 
     global see_elasticity,see_net,see_hmap,method
+    global mk_movie
     global add_hydroForce,add_gravityForce
     global dt,tmax,N1,N2,netY,netZ,model,dw,theta
     global rho,ux,uy,uz
@@ -14,6 +15,7 @@ def initialize():
     see_elasticity=0
     see_net=0
     see_hmap=0
+    mk_movie=0
     add_hydroForce=0
     add_gravityForce=1
     method=2                # 1 forward Euler, 2 semi-implicit Euler, 3 backward (implicit) Euler,
