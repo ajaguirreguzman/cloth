@@ -1,4 +1,9 @@
 
+# This .test copy contains the parameter setup used for testing the
+# performance and accuracy of the code for the different implemented
+# iterative methods for time integration
+# Recall to also setup the right initial conditions and anchors.
+
 # Observations:
 # - Mass can be set per each particle
 # - Modulus of elasticity can be set per each spring-like connection
@@ -18,9 +23,8 @@ def initialize():
     mk_movie=0
     add_hydroForce=0
     add_gravityForce=0
-    method=4                # 1 forward Euler, 2 semi-implicit Euler, 3 backward (implicit) Euler,
-                            # 4 predictor-corrector, 5 midpoint, 6 RK2, 7 RK4, 8 Verlet,
-                            # 9 velocity Verlet, 10 Yoshida
+    method=2                # 1 forward Euler, 2 semi-implicit Euler, 3 backward (implicit) Euler,
+                            # 4 midpoint, 5 RK2, 6 RK4, 7 Verlet, 8 velocity Verlet, 9 Yoshida
     dt=1e-3                 # [s] time step
     tmax=1.0                # [s] maximum integration time
     c =0.0                  # viscous damping coefficient

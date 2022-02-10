@@ -12,7 +12,6 @@
 import numpy as np
 import timeit
 from matplotlib import pyplot as plt
-import matplotlib.animation as animation
 from mpl_toolkits import mplot3d
 from mpl_toolkits.mplot3d import axes3d
 from scipy import interpolate,signal
@@ -27,6 +26,7 @@ from energy import *
 from plots import *
 from useful_scripts import *
 from io_continua import *
+from animation_setup import *
 
 
 start = timeit.default_timer()
@@ -53,27 +53,11 @@ if __name__ == "__main__":
     # movie settings
     nframes=int(tmax/dt)
 
-    # movie setup
-    FFMpegWriter=animation.writers['ffmpeg']
-    writer=FFMpegWriter(fps=10)
-    # animation
-    fig1=plt.figure(1)
-    axs1=fig1.add_subplot(projection='3d')
-    axs1.view_init(elev=10, azim=-70, vertical_axis='y')
-    #net,=axs1.plot(x.flatten(), y.flatten(), z.flatten(), 'ro', markersize=1)
-    axs1.plot_wireframe(x, y, z, rstride=1, cstride=1, color='gray')
-    axs1.set_xlabel('x')
-    axs1.set_ylabel('y')
-    axs1.set_zlabel('z')
-    myxlim=[-.2,1.2]#][-0.25,2.0]
-    myylim=[-.2,1.2]#[-0.25,0.5]
-    myzlim=[-.2,1.2]#[-0.25,1.5]
-    axs1.set_xlim(myxlim)
-    axs1.set_ylim(myylim)
-    axs1.set_zlim(myzlim)
-    rx,ry,rz=np.ptp(myxlim), np.ptp(myylim), np.ptp(myzlim)
-    axs1.set_box_aspect((rz,rx,ry))  # aspect ratio is 1:1:1 in data space
-    #plt.show()
+    # main animation and movie setup
+    writer=setup_animation()
+    myxlim,myylim,myzlim=mylims()
+    rx,ry,rz=figAspectRatios(myxlim,myylim,myzlim)
+    fig1,axs1=setup_mainFigure(x,y,z)
 
     if see_net:
         plt.show()
@@ -113,21 +97,24 @@ if __name__ == "__main__":
                 if i==0: print('using backward (implicit) Euler method')
                 xp,yp,zp,vx,vy,vz=implicitEuler_method(x,y,z,vx,vy,vz)
             if method==4:
+                if i==0: print('using predictor-corrector method')
+                xp,yp,zp,vx,vy,vz=predictorCorrector_method(x,y,z,vx,vy,vz)
+            if method==5:
                 if i==0: print('using midpoint method')
                 xp,yp,zp,vx,vy,vz=midpoint_method(x,y,z,vx,vy,vz)
-            if method==5:
+            if method==6:
                 if i==0: print('using RK2 method')
                 xp,yp,zp,vx,vy,vz=rk2_method(x,y,z,vx,vy,vz)
-            if method==6:
+            if method==7:
                 if i==0: print('using RK4 method')
                 xp,yp,zp,vx,vy,vz=rk4_method(x,y,z,vx,vy,vz)
-            if method==7:
+            if method==8:
                 if i==0: print('using Verlet method')
                 xp,yp,zp,vx,vy,vz=verlet_method(x,y,z,xm,ym,zm,vx,vy,vz,i)
-            if method==8:
+            if method==9:
                 if i==0: print('using velocity Verlet method')
                 xp,yp,zp,vx,vy,vz=velocityVerlet_method(x,y,z,vx,vy,vz)
-            if method==9:
+            if method==10:
                 if i==0: print('using Yoshida method')
                 xp,yp,zp,vx,vy,vz=yoshida_method(x,y,z,vx,vy,vz)
 
@@ -163,7 +150,7 @@ if __name__ == "__main__":
             K,V=calc_energy(x,y,z,vx,vy,vz)             # kinetic and potential energy
             file.write('%f\t%f\t%f\n' % (K+V,K,V))
 
-            # print iteration countdown, physical time, iter time, average iter time
+            if (i+1) % (0.1*nframes) == 0: print('%.0f%%' % (100*i/nframes))
             #print('%i \t %.6fs \t %.6fs \t %.6fs \t %.2f%%' % (nframes-i,t,time2-time1,timea,maxChange))
 
     file.close()

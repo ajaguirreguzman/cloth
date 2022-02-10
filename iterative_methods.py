@@ -6,8 +6,8 @@
 # - Midpoint method (2nd order)
 # - RK2 (2nd order)
 # - RK4 (4th order)
-# - Verlet/leapfrog (2nd order)
-# - velocity Verlet (generally 2nd order)
+# - Verlet (2nd order)
+# - velocity Verlet / leapfrog (2nd order, though a(t+dt) uses an Euler-advanced velocity which might affect order)
 # - Yoshida integrator (4th order)
 # To be implemented:
 # - (two-step) Adams–Bashforth method
@@ -85,6 +85,28 @@ def implicitEuler_method(x,y,z,vx,vy,vz):               # or backward Euler meth
     vxp,vyp,vzp=vxg,vyg,vzg
     return xp,yp,zp,vxp,vyp,vzp
 
+def predictorCorrector_method(x,y,z,vx,vy,vz):
+    # Heun's method predicts using (explicit) Euler method and corrects using (implicit) trapezoidal rule
+    dt=globals.dt
+    ncorrectors=1
+    # predictor step
+    ax ,ay ,az =a(x,y,z,vx,vy,vz)
+    vxg,vyg,vzg=euler_step(vx,vy,vz,ax,ay,az,dt)
+    xg ,yg ,zg =euler_step(x ,y ,z ,vx,vy,vz,dt)
+    # corrector step: implicit but with predicted value
+    for i in range(ncorrectors):
+        #print('Corrector step #%i: x[12,12]=%.8f' % (i+1,x[12,12]))
+        axg,ayg,azg=a(xg,yg,zg,vxg,vyg,vzg)
+        axm=0.5*(axg+ax)
+        aym=0.5*(ayg+ay)
+        azm=0.5*(azg+az)
+        vxm=0.5*(vxg+vx)
+        vym=0.5*(vyg+vy)
+        vzm=0.5*(vzg+vz)
+        vxg,vyg,vzg=euler_step(vx,vy,vz,axm,aym,azm,dt)
+        xg ,yg ,zg =euler_step(x ,y ,z ,vxm,vym,vzm,dt)
+    return xg,yg,zg,vxg,vyg,vzg
+
 def midpoint_method(x,y,z,vx,vy,vz):                    # order-2 for position, 1 for velocity
     dt=globals.dt
     ax ,ay ,az =a(x,y,z,vx,vy,vz)                       # acceleration at t_n
@@ -131,14 +153,12 @@ def rk4_method(x1,y1,z1,vx1,vy1,vz1):
     return xp,yp,zp,vxp,vyp,vzp
 
 def verlet_method(x,y,z,xm,ym,zm,vx,vy,vz,i):
-    # aka leapfrog method
     # xm, ym and zm are old positions
-    # velocities are only employed to calc ax, ay and az
-    # global error is 3rd-order for position and 2nd-order for velocity
+    # first step is treated differently
     dt=globals.dt
     ax,ay,az=a(x,y,z,vx,vy,vz)
     if i==0:
-        xp=x+vx*dt+0.5*ax*dt*dt
+        xp=x+vx*dt+0.5*ax*dt*dt  # 2nd-degree polynomial
         yp=y+vy*dt+0.5*ay*dt*dt
         zp=z+vz*dt+0.5*az*dt*dt
         vxp=(xp-x)/dt            # backward difference
@@ -153,7 +173,7 @@ def verlet_method(x,y,z,xm,ym,zm,vx,vy,vz,i):
         vzp=(zp-zm)/(2.0*dt)
     return xp,yp,zp,vxp,vyp,vzp
 
-def velocityVerlet_method(x,y,z,vx,vy,vz):
+def velocityVerlet_method(x,y,z,vx,vy,vz):          # aka leapfrog
     dt=globals.dt
     # step 1
     ax,ay,az=a(x,y,z,vx,vy,vz)
