@@ -70,7 +70,8 @@ if __name__ == "__main__":
     K0,V0=calc_energy(x,y,z,vx,vy,vz)
 
     # file to write
-    file=open('energy.out','a')
+    file1=open('position.out','a')
+    file2=open('energy.out','a')
 
     # initialize
     t=0.0
@@ -84,6 +85,8 @@ if __name__ == "__main__":
         # main loop
         print('Time loop... ', end='')
         for i in range(nframes):
+
+            file1.write('%f,%f\n' % (t,z[0,1]-z0[0,1]))
 
             time1 = timeit.default_timer()
 
@@ -148,12 +151,13 @@ if __name__ == "__main__":
 
             maxChange=calc_posChange(x,y,z,x0,y0,z0)    # change in position
             K,V=calc_energy(x,y,z,vx,vy,vz)             # kinetic and potential energy
-            file.write('%f\t%f\t%f\n' % (K+V,K,V))
+            file2.write('%f\t%f\t%f\n' % (K+V,K,V))
 
             if (i+1) % (0.1*nframes) == 0: print('%.0f%%' % (100*i/nframes))
             #print('%i \t %.6fs \t %.6fs \t %.6fs \t %.2f%%' % (nframes-i,t,time2-time1,timea,maxChange))
 
-    file.close()
+    file1.close()
+    file2.close()
 
     write_continua(x,y,z,globals.ly,globals.lz)
 

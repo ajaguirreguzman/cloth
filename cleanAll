@@ -1,3 +1,4 @@
+rm position.out
 rm energy.out
 rm continua_*
 

@@ -51,12 +51,21 @@ def create_positions():
     netY=globals.netY
     netZ=globals.netZ
     print('Using default initial conditions...')
-    x=np.zeros((N1+2,N2+2))
-    #lin1=(netY/N1)*mydistspace(0, N1+1, N1+2,0.005)
-    #lin2=(netZ/N2)*mydistspace(0, N2+1, N2+2,0.001)
-    lin1=(netY/N1)*np.linspace(0, N1+1, N1+2)
-    lin2=(netZ/N2)*np.linspace(0, N2+1, N2+2)
-    z,y=np.meshgrid(lin2,lin1)
+    if globals.net_geometry==1: # plane net
+        x=np.zeros((N1+2,N2+2))
+        #lin1=(netY/N1)*mydistspace(0, N1+1, N1+2,0.005)
+        #lin2=(netZ/N2)*mydistspace(0, N2+1, N2+2,0.001)
+        lin1=(netY/N1)*np.linspace(0, N1+1, N1+2)
+        lin2=(netZ/N2)*np.linspace(0, N2+1, N2+2)
+        z,y=np.meshgrid(lin2,lin1)
+    if globals.net_geometry==2: # net cage
+        lin1=(netY/N1)*np.linspace(0, N1+1, N1+2)
+        lin2=np.linspace(0, N2+1, N2+2)/(N2+1)
+        linx=globals.radius*np.sin(2.0*np.pi*lin2)
+        linz=globals.radius*(1.0-np.cos(2.0*np.pi*lin2))
+        x,na=np.meshgrid(linx,linx)
+        y,na=np.meshgrid(lin1,linx,indexing='ij')
+        z,na=np.meshgrid(linz,linx)
     ly,lz=y[1:,:]-y[:-1,:],z[:,1:]-z[:,:-1]
     return x,y,z,ly,lz
 
@@ -72,5 +81,8 @@ def set_velocities():
     vx=np.zeros((N1+2,N2+2))
     vy=np.zeros((N1+2,N2+2))
     vz=np.zeros((N1+2,N2+2))
-    vx[10:12,10:12]=5.0
+    middle1=int(N1/2.0)
+    #middle2=int(N2/2.0)
+    #vx[middle1:middle+2,middle2:middle2+2]=5.0
+    #vz[:,1]=5.0
     return vx,vy,vz

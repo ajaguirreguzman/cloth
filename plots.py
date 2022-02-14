@@ -5,7 +5,8 @@ from matplotlib.colors import LogNorm
 def plot_elasticity(k1):
     fig=plt.figure()
     axs=plt.gca()
-    h=axs.imshow(k1, cmap='Greys', norm=LogNorm(vmin=k1.min(), vmax=k1.max()) ,interpolation='nearest', origin='lower')
+    h=axs.imshow(k1, cmap='Greys', norm=LogNorm(vmin=k1.min(), vmax=k1.max()),
+                 interpolation='nearest', origin='lower')
     fig.colorbar(h, ax=axs)
     plt.show()
     exit()
