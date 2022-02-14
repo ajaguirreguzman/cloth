@@ -43,7 +43,7 @@ if __name__ == "__main__":
     method=globals.method
 
     # initial conditions
-    x,y,z,globals.ly,globals.lz=set_positions()
+    x,y,z,globals.l1,globals.l2,globals.l3,globals.l4=set_positions()
     vx,vy,vz=set_velocities()
     x0,y0,z0=x,y,z
 
@@ -159,7 +159,7 @@ if __name__ == "__main__":
     file1.close()
     file2.close()
 
-    write_continua(x,y,z,globals.ly,globals.lz)
+    write_continua(x,y,z,globals.l1,globals.l2,globals.l3,globals.l4)
 
     damping_ratio=globals.c/2.0/np.sqrt(globals.k1[0,0])    # damping ratio
     Ei=K0+V0                                # initial energy

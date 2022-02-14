@@ -2,6 +2,7 @@
 import numpy as np
 import globals
 from io_continua import *
+from useful_scripts import *
 import os.path
 from os import path
 
@@ -32,18 +33,20 @@ def myinterpolation(x):
 def read_previous():
     N1=globals.N1
     N2=globals.N2
-    x,y,z,ly,lz=read_continua()
+    x,y,z,l1,l2,l3,l4=read_continua()
     if np.shape(x)!=(N1+2,N2+2):
         len1,len2=np.shape(x)
         print('Interpolating continua data from %ix%i to %ix%i' % (len1,len2,N1+2,N2+2))
         x=myinterpolation(x)
         y=myinterpolation(y)
         z=myinterpolation(z)
-        ly=myinterpolation(ly)
-        lz=myinterpolation(lz)
+        l1=myinterpolation(l1)
+        l2=myinterpolation(l2)
+        l3=myinterpolation(l3)
+        l4=myinterpolation(l4)
     else:
         print('Continua data have the same shape')
-    return x,y,z,ly,lz
+    return x,y,z,l1,l2,l3,l4
 
 def create_positions():
     N1=globals.N1
@@ -63,17 +66,26 @@ def create_positions():
         lin2=np.linspace(0, N2+1, N2+2)/(N2+1)
         linx=globals.radius*np.sin(2.0*np.pi*lin2)
         linz=globals.radius*(1.0-np.cos(2.0*np.pi*lin2))
-        x,na=np.meshgrid(linx,linx)
+        x,na=np.meshgrid(linx,lin1)
         y,na=np.meshgrid(lin1,linx,indexing='ij')
-        z,na=np.meshgrid(linz,linx)
-    ly,lz=y[1:,:]-y[:-1,:],z[:,1:]-z[:,:-1]
-    return x,y,z,ly,lz
+        z,na=np.meshgrid(linz,lin1)
+    #ly,lz=y[1:,:]-y[:-1,:],z[:,1:]-z[:,:-1]
+    xyz1,xyz2,xyz3,xyz4=neighbor_info(x,y,z)    # xyz3,xyz4 are transposed for convenience
+    dx1,dy1,dz1=relative_var(xyz1)
+    dx2,dy2,dz2=relative_var(xyz2)
+    dx3,dy3,dz3=relative_var(xyz3)
+    dx4,dy4,dz4=relative_var(xyz4)
+    l1=np.sqrt(dx1*dx1+dy1*dy1+dz1*dz1)         # relaxed distance for spring 1
+    l2=np.sqrt(dx2*dx2+dy2*dy2+dz2*dz2)         # relaxed distance for spring 2
+    l3=np.sqrt(dx3*dx3+dy3*dy3+dz3*dz3)         # relaxed distance for spring 3
+    l4=np.sqrt(dx4*dx4+dy4*dy4+dz4*dz4)         # relaxed distance for spring 4
+    return x,y,z,l1,l2,l3,l4
 
 def set_positions():
     tmp=path.exists('continua_x.out')
-    if tmp: x,y,z,ly,lz=read_previous()
-    else:   x,y,z,ly,lz=create_positions()
-    return x,y,z,ly,lz
+    if tmp: x,y,z,l1,l2,l3,l4=read_previous()
+    else:   x,y,z,l1,l2,l3,l4=create_positions()
+    return x,y,z,l1,l2,l3,l4
 
 def set_velocities():
     N1=globals.N1
@@ -84,5 +96,5 @@ def set_velocities():
     middle1=int(N1/2.0)
     #middle2=int(N2/2.0)
     #vx[middle1:middle+2,middle2:middle2+2]=5.0
-    #vz[:,1]=5.0
+    #vx[0,:]=5.0
     return vx,vy,vz

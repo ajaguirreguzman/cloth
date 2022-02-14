@@ -1,4 +1,2 @@
-rm position.out
-rm energy.out
-rm continua_*
+rm *.out
 

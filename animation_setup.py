@@ -2,10 +2,11 @@
 import matplotlib.animation as animation
 import numpy as np
 from matplotlib import pyplot as plt
+import globals
 
 def setup_animation(): 
     FFMpegWriter=animation.writers['ffmpeg']
-    writer=FFMpegWriter(fps=10)
+    writer=FFMpegWriter(fps=0.5/globals.dt)
     return writer
 
 def mylims():

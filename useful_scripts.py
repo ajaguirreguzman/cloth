@@ -31,10 +31,9 @@ def unset_crossProduct_array(f):
     fx=f[:,0]
     fy=f[:,1]
     fz=f[:,2]
-    N=int(np.sqrt(len(fx)))
-    fx=fx.reshape((N,N))
-    fy=fy.reshape((N,N))
-    fz=fz.reshape((N,N))
+    fx=fx.reshape((globals.N1+2,globals.N2+2))
+    fy=fy.reshape((globals.N1+2,globals.N2+2))
+    fz=fz.reshape((globals.N1+2,globals.N2+2))
     return fx,fy,fz
 
 # P1___P2

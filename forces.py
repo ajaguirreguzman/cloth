@@ -73,6 +73,7 @@ def add_anchors(ax,ay,az):
     ax[0,:]=0.0
     ay[0,:]=0.0
     az[0,:]=0.0
+    """
     ax[-1,:]=0.0
     ay[-1,:]=0.0
     az[-1,:]=0.0
@@ -83,6 +84,7 @@ def add_anchors(ax,ay,az):
     ax[:,-1]=0.0
     ay[:,-1]=0.0
     az[:,-1]=0.0
+    """
     return ax,ay,az
 
 def force_components(F,xyz):
@@ -146,19 +148,21 @@ def add_forces(F1,F2,F3,F4):
 def a(x,y,z,vx,vy,vz):
     k1=globals.k1
     k2=globals.k2
-    ly=globals.ly
-    lz=globals.lz
+    l1=globals.l1
+    l2=globals.l2
+    l3=globals.l3
+    l4=globals.l4
     c=globals.c
     m=globals.m
     # preliminaries
     xyz1,xyz2,xyz3,xyz4=neighbor_info(x,y,z)            # xyz3 and xyz4 are transposed for convenience
     vxyz1,vxyz2,vxyz3,vxyz4=neighbor_info(vx,vy,vz)     # vxyz3 and vxyz4 are transposed for convenience
-    lz1,lz2,ly3,ly4=relaxed_distance(lz,ly)             # ly3 and ly4 are transposed for convenience
+    #lz1,lz2,ly3,ly4=relaxed_distance(lz,ly)             # ly3 and ly4 are transposed for convenience
     # spring force from neighbors
-    Fs1,na=spring_force( k1,lz1,xyz1)           # k1 is modulus of elasticity along z; V1 = potential energy in spring 1
-    Fs2,na=spring_force(-k1,lz2,xyz2)           # notice the -k
-    Fs3,na=spring_force( k2,ly3,xyz3)           # since all arguments are transposed, then Fs3 is also transposed
-    Fs4,na=spring_force(-k2,ly4,xyz4)
+    Fs1,na=spring_force( k1,l1,xyz1)           # k1 is modulus of elasticity along z; V1 = potential energy in spring 1
+    Fs2,na=spring_force(-k1,l2,xyz2)           # notice the -k
+    Fs3,na=spring_force( k2,l3,xyz3)           # since all arguments are transposed, then Fs3 is also transposed
+    Fs4,na=spring_force(-k2,l4,xyz4)
     # frictional force
     Ff1=frictional_force( c,xyz1,vxyz1)
     Ff2=frictional_force(-c,xyz2,vxyz2)
