@@ -53,15 +53,18 @@ def create_positions():
     N2=globals.N2
     netY=globals.netY
     netZ=globals.netZ
+    x=np.ones((N1+2,N2+2))
+    y=np.ones((N1+2,N2+2))
+    z=np.ones((N1+2,N2+2))
     print('Using default initial conditions...')
-    if globals.net_geometry==1: # plane net
+    if globals.net_geometry=='panel':
         x=np.zeros((N1+2,N2+2))
         #lin1=(netY/N1)*mydistspace(0, N1+1, N1+2,0.005)
         #lin2=(netZ/N2)*mydistspace(0, N2+1, N2+2,0.001)
         lin1=(netY/N1)*np.linspace(0, N1+1, N1+2)
         lin2=(netZ/N2)*np.linspace(0, N2+1, N2+2)
         z,y=np.meshgrid(lin2,lin1)
-    if globals.net_geometry==2: # net cage
+    if globals.net_geometry=='cage':
         lin1=(netY/N1)*np.linspace(0, N1+1, N1+2)
         lin2=np.linspace(0, N2+1, N2+2)/(N2+1)
         linx=globals.radius*np.sin(2.0*np.pi*lin2)

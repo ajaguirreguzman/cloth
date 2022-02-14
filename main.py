@@ -137,7 +137,7 @@ if __name__ == "__main__":
                 break
 
             # update movie every 200 frames
-            if i % 10 == 0:
+            if i % 50 == 0:
                 #net.set_data_3d(x.flatten(), y.flatten(), z.flatten())
                 axs1.cla()
                 axs1.set_xlim(myxlim)

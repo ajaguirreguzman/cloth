@@ -31,8 +31,8 @@ def hydrodynamic_force(x,y,z,vx,vy,vz):
     uy=globals.uy
     uz=globals.uz
     rho=globals.rho
-    Cd,Cl=hydrodynamic_coeffs()
     A,ex,ey,ez=reference_area(x,y,z)                # area of net panel element (screen?) and normal vector components
+    Cd,Cl=hydrodynamic_coeffs(ex,ey,ez)
     urx,ury,urz=ux-vx,uy-vy,uz-vz                   # relative velocity components
     ur=np.sqrt(urx*urx+ury*ury+urz*urz)             # relative velocity magnitude
     iDx,iDy,iDz=urx/ur,ury/ur,urz/ur                # unit vector for drag force
@@ -188,6 +188,11 @@ def a(x,y,z,vx,vy,vz):
     # add gravitational acceleration
     if globals.add_gravityForce:
         ay+=-9.8
+    # attach end to beginning
+    if globals.net_geometry=='cage':
+       ax[:,-1]=ax[:,0] 
+       ay[:,-1]=ay[:,0] 
+       az[:,-1]=az[:,0] 
     # constraints
     # ADD CONSTRAINTS HERE
     # https://en.wikipedia.org/wiki/Verlet_integration#Constraints
