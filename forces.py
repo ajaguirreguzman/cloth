@@ -1,10 +1,12 @@
 
 # Included:
 # - Linear-elastic interparticle, frictional, hydrodynamic (drag and lift) and gravitational forces
+# - Wilson 1967's expression for linear-elastic interactions, used by Bi et al. 2014a,b. DIVERGES!
+#
 # To be included:
 # - Buoyancy forces
 # - Constrained dynamics: currently constraints on positions (artificially) advance them one time step ahead, while velocities stay behind. This is incorrect. Implement constraints as a force instead.
-# - Wilson 1967's expression for the linear-elastic response of the net. This is used by Bi et al. 2014a,b.
+# Added mass
 
 import globals
 from useful_scripts import *
@@ -12,8 +14,13 @@ from hydro_models import *
 
 def spring_force(k,l,xyz):
     dx,dy,dz=relative_var(xyz)
-    r=np.sqrt(dx*dx+dy*dy+dz*dz)            # relative distance
-    F=-k*(r-l)                              # restoring force
+    r=np.sqrt(dx*dx+dy*dy+dz*dz)                    # relative distance
+    C1,C2=784.9e6,1.6988    # polyamide (nylon)
+    C1,C2=345.37e6,1.0121   # polyethylene 
+    twineD=globals.twineD
+    twineL=globals.twineL
+    if globals.springModel=='linear':     F=-k*(r-l)
+    if globals.springModel=='wilson1967': F=-twineD*twineD*C1*np.sign(r-l)*(np.abs(r-l)/twineL)**C2
     V=0.5*abs(k)*(r-l)**2.0
     return F,V
 

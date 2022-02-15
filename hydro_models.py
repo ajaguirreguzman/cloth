@@ -9,7 +9,7 @@ def hydrodynamic_coeffs(ex,ey,ez):
         ux=globals.ux
         uy=globals.uy
         uz=globals.uz
-        Sn=2.0*globals.dW/globals.L
+        Sn=2.0*globals.twineD/globals.twineL
         ex=abs(ex)
         ey=abs(ey)
         ez=abs(ez)

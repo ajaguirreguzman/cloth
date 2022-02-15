@@ -6,13 +6,13 @@ import globals
 
 def setup_animation(): 
     FFMpegWriter=animation.writers['ffmpeg']
-    writer=FFMpegWriter(fps=0.5/globals.dt)
+    writer=FFMpegWriter(fps=1.0/globals.dt/100)
     return writer
 
 def mylims():
-    myxlim=[-.2,1.2]#][-0.25,2.0]
-    myylim=[-.2,1.2]#[-0.25,0.5]
-    myzlim=[-.2,1.2]#[-0.25,1.5]
+    myxlim=[-1.75,1.75]#][-0.25,2.0]
+    myylim=[-0.20,1.70]#[-0.25,0.5]
+    myzlim=[-0.20,1.95]#[-0.25,1.5]
     return myxlim,myylim,myzlim
 
 def figAspectRatios(myxlim,myylim,myzlim):
@@ -21,17 +21,24 @@ def figAspectRatios(myxlim,myylim,myzlim):
 def setup_mainFigure(x,y,z):
     fig1=plt.figure(1)
     axs1=fig1.add_subplot(projection='3d')
-    axs1.view_init(elev=10, azim=-70, vertical_axis='y')
-    #net,=axs1.plot(x.flatten(), y.flatten(), z.flatten(), 'ro', markersize=1)
+    axs1.view_init(elev=0, azim=0, vertical_axis='y')
     axs1.plot_wireframe(x, y, z, rstride=1, cstride=1, color='gray')
     axs1.set_xlabel('x')
     axs1.set_ylabel('y')
     axs1.set_zlabel('z')
+    update_animation(axs1,x,y,z)
+    return fig1,axs1
+
+def update_animation(axs1,x,y,z):
+    axs1.cla()
+    # update net
     myxlim,myylim,myzlim=mylims()
     axs1.set_xlim(myxlim)
     axs1.set_ylim(myylim)
     axs1.set_zlim(myzlim)
     rx,ry,rz=figAspectRatios(myxlim,myylim,myzlim)
-    axs1.set_box_aspect((rz,rx,ry))  # aspect ratio is 1:1:1 in data space
-    #plt.show()
-    return fig1,axs1
+    axs1.set_box_aspect((rz,rx,ry))                                     # aspect ratio = 1:1:1 in data space
+    axs1.plot_wireframe(x, y, z, rstride=1, cstride=1, color='gray')
+    # highlight heavier nodes
+    mmax=np.max(globals.m)
+    axs1.plot(x[globals.m==mmax], y[globals.m==mmax], z[globals.m==mmax], 'bo', ms=4)

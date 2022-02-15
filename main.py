@@ -27,6 +27,7 @@ from plots import *
 from useful_scripts import *
 from io_continua import *
 from animation_setup import *
+from print_info import *
 
 
 start = timeit.default_timer()
@@ -37,10 +38,12 @@ if __name__ == "__main__":
     N2=globals.N2
     tmax=globals.tmax
     dt=globals.dt
-    see_elasticity=globals.see_elasticity
     see_net=globals.see_net
     see_hmap=globals.see_hmap
     method=globals.method
+
+    # print some info
+    print_preInfo()
 
     # initial conditions
     x,y,z,globals.l1,globals.l2,globals.l3,globals.l4=set_positions()
@@ -48,13 +51,16 @@ if __name__ == "__main__":
     x0,y0,z0=x,y,z
 
     # visualize elasticity
-    if see_elasticity: plot_elasticity(globals.k1)
+    #if globals.see_elasticity: plot_elasticity(globals.k1)
+    if globals.see_elasticity: plot_elasticity(globals.m)
 
     # movie settings
     nframes=int(tmax/dt)
 
-    # main animation and movie setup
+    # movie
     writer=setup_animation()
+    
+    # animation
     myxlim,myylim,myzlim=mylims()
     rx,ry,rz=figAspectRatios(myxlim,myylim,myzlim)
     fig1,axs1=setup_mainFigure(x,y,z)
@@ -132,21 +138,17 @@ if __name__ == "__main__":
             t+=dt
 
             # stop if diverge
-            if max(np.sqrt(x*x+y*y+z*z).flatten())>100:
+            if max(np.sqrt(x*x+y*y+z*z).flatten())>200:
                 print('Solution diverged!')
+                #exit()
                 break
 
             # update movie every 200 frames
-            if i % 50 == 0:
+            if i % 100 == 0:
                 #net.set_data_3d(x.flatten(), y.flatten(), z.flatten())
-                axs1.cla()
-                axs1.set_xlim(myxlim)
-                axs1.set_ylim(myylim)
-                axs1.set_zlim(myzlim)
-                axs1.set_box_aspect((rz,rx,ry))  # aspect ratio is 1:1:1 in data space
-                axs1.plot_wireframe(x, y, z, rstride=1, cstride=1, color='gray')
+                update_animation(axs1,x,y,z)
                 if see_hmap: hmap.set_data(reference_area(x,y,z)[1])
-                plt.pause(0.01)
+                plt.pause(0.001)
                 if globals.mk_movie: writer.grab_frame()
 
             maxChange=calc_posChange(x,y,z,x0,y0,z0)    # change in position
