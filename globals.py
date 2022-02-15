@@ -21,10 +21,10 @@ def initialize():
     mk_movie=0
     add_hydroForce=1
     add_gravityForce=1
-    method=7                # 1 forward Euler, 2 semi-implicit Euler, 3 backward (implicit) Euler,
+    method=2                # 1 forward Euler, 2 semi-implicit Euler, 3 backward (implicit) Euler,
                             # 4 predictor-corrector, 5 midpoint, 6 RK2, 7 RK4, 8 Verlet,
                             # 9 velocity Verlet, 10 Yoshida
-    dt=5e-4                 # [s] time step
+    dt=1e-3                 # [s] time step
     tmax=10.0               # [s] maximum integration time
     c =0.0                  # viscous damping coefficient
     N1=12                   # number of particles along y (edges not included) | USE EVEN NUMBER

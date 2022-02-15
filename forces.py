@@ -143,6 +143,14 @@ def add_forces(F1,F2,F3,F4):
     ax[-1,-1]=-F2x[-1,-1]-F4x[-1,-1]
     ay[-1,-1]=-F2y[-1,-1]-F4y[-1,-1]
     az[-1,-1]=-F2z[-1,-1]-F4z[-1,-1]
+    if globals.net_geometry=='cage':        # attach end to beginning
+        # first column:
+        #   :     |         |                Later on, (total) accelerations on
+        # ~~0  +  0--  =  ~~0--              last colum are set as in first column
+        #   :     |         |
+        ax[:,0]+=-F2x[:,-1]
+        ay[:,0]+=-F2y[:,-1]
+        az[:,0]+=-F2z[:,-1]
     return ax,ay,az
 
 def a(x,y,z,vx,vy,vz):
@@ -188,8 +196,7 @@ def a(x,y,z,vx,vy,vz):
     # add gravitational acceleration
     if globals.add_gravityForce:
         ay+=-9.8
-    # attach end to beginning
-    if globals.net_geometry=='cage':
+    if globals.net_geometry=='cage':            # set (total) accelerations on last column as in first column
        ax[:,-1]=ax[:,0] 
        ay[:,-1]=ay[:,0] 
        az[:,-1]=az[:,0] 
