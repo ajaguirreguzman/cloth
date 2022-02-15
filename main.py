@@ -14,8 +14,8 @@ import timeit
 from matplotlib import pyplot as plt
 from mpl_toolkits import mplot3d
 from mpl_toolkits.mplot3d import axes3d
-from scipy import interpolate,signal
-import random 
+#from scipy import interpolate,signal
+#import random 
 from matplotlib.colors import LogNorm
 
 # my functions

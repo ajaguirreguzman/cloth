@@ -5,6 +5,7 @@ from io_continua import *
 from useful_scripts import *
 import os.path
 from os import path
+from scipy import interpolate#,signal
 
 def mydistspace(start,stop,n,lmin):
     lmax=(stop-start)/2.0
@@ -20,13 +21,13 @@ def mydistspace(start,stop,n,lmin):
     x=np.concatenate((xb,xf), axis=0)+lmax+start
     return x
 
-def myinterpolation(x):
+def myinterpolation(x,N1,N2):
     len1,len2=np.shape(x)                               # setup original indices
     lin1=np.linspace(0, 1, len1)
     lin2=np.linspace(0, 1, len2)
     x=interpolate.interp2d(lin2, lin1, x, kind='cubic') # interpolation function | forgot why indices are swapped
-    lin1=np.linspace(0, 1, N1+2)                        # setup new indices
-    lin2=np.linspace(0, 1, N2+2)
+    lin1=np.linspace(0, 1, N1)                        # setup new indices
+    lin2=np.linspace(0, 1, N2)
     x=x(lin2,lin1)                                      # interpolate | forgot why indices are swapped
     return  x
 
@@ -37,13 +38,13 @@ def read_previous():
     if np.shape(x)!=(N1+2,N2+2):
         len1,len2=np.shape(x)
         print('Interpolating continua data from %ix%i to %ix%i' % (len1,len2,N1+2,N2+2))
-        x=myinterpolation(x)
-        y=myinterpolation(y)
-        z=myinterpolation(z)
-        l1=myinterpolation(l1)
-        l2=myinterpolation(l2)
-        l3=myinterpolation(l3)
-        l4=myinterpolation(l4)
+        x=myinterpolation(x,N1+2,N2+2)
+        y=myinterpolation(y,N1+2,N2+2)
+        z=myinterpolation(z,N1+2,N2+2)
+        l1=myinterpolation(l1,N1+2,N2)
+        l2=myinterpolation(l2,N1+2,N2)
+        l3=myinterpolation(l3,N2+2,N1)
+        l4=myinterpolation(l4,N2+2,N1)
     else:
         print('Continua data have the same shape')
     return x,y,z,l1,l2,l3,l4

@@ -25,10 +25,10 @@ def initialize():
                             # 4 predictor-corrector, 5 midpoint, 6 RK2, 7 RK4, 8 Verlet,
                             # 9 velocity Verlet, 10 Yoshida
     dt=1e-3                 # [s] time step
-    tmax=10.0               # [s] maximum integration time
+    tmax=20.0               # [s] maximum integration time
     c =0.0                  # viscous damping coefficient
-    N1=12                   # number of particles along y (edges not included) | USE EVEN NUMBER
-    N2=40                   # number of particles along z (edges not included) | USE EVEN NUMBER
+    N1=16                   # number of particles along y (edges not included) | USE EVEN NUMBER
+    N2=48                   # number of particles along z (edges not included) | USE EVEN NUMBER
     netY=1.0                # net size in y
     netZ=2.0*np.pi          # net size in z
     model='S1'              # model for drag and lift coefficients = S1, S4, none (set both to 1)
