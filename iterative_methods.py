@@ -19,7 +19,7 @@
 # - https://www.phys.hawaii.edu/~varner/PHYS305-Spr12/P305_lab8.html
 # - https://www.compadre.org/PICUP/resources/Numerical-Integration/
 
-import globals
+import params
 from forces import a
 from useful_scripts import newton_raphson
 import numpy as np
@@ -31,21 +31,21 @@ def euler_step(x,y,z,fx,fy,fz,dt):
     return xp,yp,zp
 
 def euler_method(x,y,z,vx,vy,vz):                       # standard forward (explicit) Euler method
-    dt=globals.dt
+    dt=params.dt
     ax ,ay ,az =a(x,y,z,vx,vy,vz)                       # acceleration at t_n
     vxp,vyp,vzp=euler_step(vx,vy,vz,ax,ay,az,dt)        # velocity at t_(n+1)
     xp ,yp ,zp =euler_step(x ,y ,z ,vx,vy,vz,dt)        # position at t_(n+1)
     return xp,yp,zp,vxp,vyp,vzp
 
 def semiImplicitEuler_method(x,y,z,vx,vy,vz):
-    dt=globals.dt
+    dt=params.dt
     ax ,ay ,az =a(x,y,z,vx,vy,vz)                       # acceleration at t_n
     vxp,vyp,vzp=euler_step(vx,vy,vz,ax ,ay ,az ,dt)     # velocity at t_(n+1)
     xp ,yp ,zp =euler_step(x ,y ,z ,vxp,vyp,vzp,dt)     # notice that v(t+dt) is used instead of v(t)
     return xp,yp,zp,vxp,vyp,vzp
 
 def newtonRaphson_func(xp,yp,zp,vx,vy,vz,vxg,vyg,vzg):  # function for Newton-Raphson algorithm
-    dt=globals.dt
+    dt=params.dt
     axg,ayg,azg=a(xp,yp,zp,vxg,vyg,vzg)                 # x(t+dt) and velocity guess
     fxg=vxg-vx-axg*dt
     fyg=vyg-vy-ayg*dt
@@ -53,9 +53,9 @@ def newtonRaphson_func(xp,yp,zp,vx,vy,vz,vxg,vyg,vzg):  # function for Newton-Ra
     return fxg,fyg,fzg
 
 def implicitEuler_method(x,y,z,vx,vy,vz):               # or backward Euler method
-    dt=globals.dt
-    N1=globals.N1
-    N2=globals.N2
+    dt=params.dt
+    N1=params.N1
+    N2=params.N2
     xp,yp,zp=euler_step(x,y,z,vx,vy,vz,dt)
     # velocity initial guess
     vxg=np.ones((N1+2,N2+2))
@@ -87,7 +87,7 @@ def implicitEuler_method(x,y,z,vx,vy,vz):               # or backward Euler meth
 
 def predictorCorrector_method(x,y,z,vx,vy,vz):
     # Heun's method predicts using (explicit) Euler method and corrects using (implicit) trapezoidal rule
-    dt=globals.dt
+    dt=params.dt
     ncorrectors=1
     # predictor step
     ax ,ay ,az =a(x,y,z,vx,vy,vz)
@@ -108,7 +108,7 @@ def predictorCorrector_method(x,y,z,vx,vy,vz):
     return xg,yg,zg,vxg,vyg,vzg
 
 def midpoint_method(x,y,z,vx,vy,vz):                    # order-2 for position, 1 for velocity
-    dt=globals.dt
+    dt=params.dt
     ax ,ay ,az =a(x,y,z,vx,vy,vz)                       # acceleration at t_n
     vxp,vyp,vzp=euler_step(vx,vy,vz,ax ,ay ,az ,dt)     # velocity at t_(n+1)
     vxm=0.5*(vxp+vx)
@@ -118,7 +118,7 @@ def midpoint_method(x,y,z,vx,vy,vz):                    # order-2 for position, 
     return xp,yp,zp,vxp,vyp,vzp
 
 def rk2_method(x,y,z,vx,vy,vz):
-    dt=globals.dt
+    dt=params.dt
     ax ,ay ,az =a(x,y,z,vx,vy,vz)                       # acceleration at t_n
     vxh,vyh,vzh=euler_step(vx,vy,vz,ax,ay,az,dt/2.0)    # velocity at t_(n+1/2)
     xh ,yh ,zh =euler_step(x ,y ,z ,vx,vy,vz,dt/2.0)    # position at t_(n+1/2)
@@ -128,7 +128,7 @@ def rk2_method(x,y,z,vx,vy,vz):
     return xp,yp,zp,vxp,vyp,vzp
 
 def rk4_method(x1,y1,z1,vx1,vy1,vz1):
-    dt=globals.dt
+    dt=params.dt
     # k1
     ax1,ay1,az1=a(x1,y1,z1,vx1,vy1,vz1)
     # k2
@@ -155,7 +155,7 @@ def rk4_method(x1,y1,z1,vx1,vy1,vz1):
 def verlet_method(x,y,z,xm,ym,zm,vx,vy,vz,i):
     # xm, ym and zm are old positions
     # first step is treated differently
-    dt=globals.dt
+    dt=params.dt
     ax,ay,az=a(x,y,z,vx,vy,vz)
     if i==0:
         xp=x+vx*dt+0.5*ax*dt*dt  # 2nd-degree polynomial
@@ -174,7 +174,7 @@ def verlet_method(x,y,z,xm,ym,zm,vx,vy,vz,i):
     return xp,yp,zp,vxp,vyp,vzp
 
 def velocityVerlet_method(x,y,z,vx,vy,vz):          # aka leapfrog
-    dt=globals.dt
+    dt=params.dt
     # step 1
     ax,ay,az=a(x,y,z,vx,vy,vz)
     xp=x+vx*dt+0.5*ax*dt*dt
@@ -191,7 +191,7 @@ def velocityVerlet_method(x,y,z,vx,vy,vz):          # aka leapfrog
     return xp,yp,zp,vxp,vyp,vzp
 
 def yoshida_method(x,y,z,vx,vy,vz):
-    dt=globals.dt
+    dt=params.dt
     # preliminaries
     cbrt2=2.0**(3.0/2.0)
     w0=-cbrt2/(2.0-cbrt2)

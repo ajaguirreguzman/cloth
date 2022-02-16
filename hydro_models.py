@@ -1,15 +1,15 @@
 
 import numpy as np
-import globals
+import params
 
 # For definition of theta, see Fig.5 in Cheng et al. 2020.
 
 def hydrodynamic_coeffs(ex,ey,ez):
-    if globals.model=='S1':
-        ux=globals.ux
-        uy=globals.uy
-        uz=globals.uz
-        Sn=2.0*globals.twineD/globals.twineL
+    if params.hydroModel=='S1':
+        ux=params.ux
+        uy=params.uy
+        uz=params.uz
+        Sn=2.0*params.twineD/params.twineL
         ex=abs(ex)
         ey=abs(ey)
         ez=abs(ez)

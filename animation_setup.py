@@ -2,11 +2,11 @@
 import matplotlib.animation as animation
 import numpy as np
 from matplotlib import pyplot as plt
-import globals
+import params
 
 def setup_animation(): 
     FFMpegWriter=animation.writers['ffmpeg']
-    writer=FFMpegWriter(fps=1.0/globals.dt/100)
+    writer=FFMpegWriter(fps=1.0/params.dt/100)
     return writer
 
 def mylims():
@@ -40,5 +40,5 @@ def update_animation(axs1,x,y,z):
     axs1.set_box_aspect((rz,rx,ry))                                     # aspect ratio = 1:1:1 in data space
     axs1.plot_wireframe(x, y, z, rstride=1, cstride=1, color='gray')
     # highlight heavier nodes
-    mmax=np.max(globals.m)
-    axs1.plot(x[globals.m==mmax], y[globals.m==mmax], z[globals.m==mmax], 'bo', ms=4)
+    mmax=np.max(params.m)
+    axs1.plot(x[params.m==mmax], y[params.m==mmax], z[params.m==mmax], 'bo', ms=4)

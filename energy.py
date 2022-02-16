@@ -1,16 +1,16 @@
 
 import numpy as np
-import globals
+import params
 from useful_scripts import neighbor_info,relaxed_distance
 from forces import spring_force
 
 def calc_energy(x,y,z,vx,vy,vz):
-    k1=globals.k1
-    k2=globals.k2
-    l1=globals.l1
-    l2=globals.l2
-    l3=globals.l3
-    l4=globals.l4
+    k1=params.k1
+    k2=params.k2
+    l1=params.l1
+    l2=params.l2
+    l3=params.l3
+    l4=params.l4
     xyz1,xyz2,xyz3,xyz4=neighbor_info(x,y,z)    # xyz3 and xyz4 are transposed for convenience
     #lz1,lz2,ly3,ly4=relaxed_distance(lz,ly)     # ly3 and ly4 are transposed for convenience
     na,V1=spring_force( k1,l1,xyz1)            # k1 is modulus of elasticity along z; V1 = potential energy in spring 1

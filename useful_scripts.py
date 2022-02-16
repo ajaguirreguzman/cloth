@@ -1,6 +1,6 @@
 
 import numpy as np
-import globals
+import params
 
 def relative_var(xyz):
     x,y,z=xyz
@@ -31,9 +31,9 @@ def unset_crossProduct_array(f):
     fx=f[:,0]
     fy=f[:,1]
     fz=f[:,2]
-    fx=fx.reshape((globals.N1+2,globals.N2+2))
-    fy=fy.reshape((globals.N1+2,globals.N2+2))
-    fz=fz.reshape((globals.N1+2,globals.N2+2))
+    fx=fx.reshape((params.N1+2,params.N2+2))
+    fy=fy.reshape((params.N1+2,params.N2+2))
+    fz=fz.reshape((params.N1+2,params.N2+2))
     return fx,fy,fz
 
 # P1___P2

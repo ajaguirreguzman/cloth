@@ -8,7 +8,7 @@
 # - Constrained dynamics: currently constraints on positions (artificially) advance them one time step ahead, while velocities stay behind. This is incorrect. Implement constraints as a force instead.
 # Added mass
 
-import globals
+import params
 from useful_scripts import *
 from hydro_models import *
 
@@ -17,10 +17,11 @@ def spring_force(k,l,xyz):
     r=np.sqrt(dx*dx+dy*dy+dz*dz)                    # relative distance
     C1,C2=784.9e6,1.6988    # polyamide (nylon)
     C1,C2=345.37e6,1.0121   # polyethylene 
-    twineD=globals.twineD
-    twineL=globals.twineL
-    if globals.springModel=='linear':     F=-k*(r-l)
-    if globals.springModel=='wilson1967': F=-twineD*twineD*C1*np.sign(r-l)*(np.abs(r-l)/twineL)**C2
+    twineD=params.twineD
+    twineL=params.twineL
+    q=twineD*twineD*C1/twineL**C2
+    if params.springModel=='linear':     F=-k*(r-l)
+    if params.springModel=='wilson1967': F=-q*np.sign(r-l)*abs(r-l)**C2
     V=0.5*abs(k)*(r-l)**2.0
     return F,V
 
@@ -34,10 +35,10 @@ def frictional_force(c,xyz,vxyz):
     return F
 
 def hydrodynamic_force(x,y,z,vx,vy,vz):
-    ux=globals.ux
-    uy=globals.uy
-    uz=globals.uz
-    rho=globals.rho
+    ux=params.ux
+    uy=params.uy
+    uz=params.uz
+    rho=params.rho
     A,ex,ey,ez=reference_area(x,y,z)                # area of net panel element (screen?) and normal vector components
     Cd,Cl=hydrodynamic_coeffs(ex,ey,ez)
     urx,ury,urz=ux-vx,uy-vy,uz-vz                   # relative velocity components
@@ -57,8 +58,16 @@ def hydrodynamic_force(x,y,z,vx,vy,vz):
     Flz=0.5*Cl*rho*A*ur*ur*iLz
     return Fdx,Fdy,Fdz,Flx,Fly,Flz
 
-def constraint_force():
-    lz=globals.lz
+def constraint_force(x,y,z,vx,vy,vz,ax,ay,az):
+    xdotx=x*x+y*y+z*z
+    vdotv=vx*vx+vy*vy+vz*vz
+    adotx=ax*x+ay*y+az*z
+    lamb=-safe_div(adotx+vdotv,xdotx)
+    Fx=lamb*x   # per unit mass
+    Fy=lamb*y
+    Fz=lamb*z
+    """
+    lz=params.lz
     d1=z[:,1:]-z[:,:-1]
     d2=abs(d1)
     d3=(d2-lz)/d2
@@ -67,6 +76,7 @@ def constraint_force():
     Fx=0.0
     Fy=0.0
     Fz=0.0
+    """
     return Fx,Fy,Fz
 
 def add_anchors(ax,ay,az):
@@ -103,8 +113,8 @@ def force_components(F,xyz):
     return Fx,Fy,Fz
 
 def add_forces(F1,F2,F3,F4):
-    N1=globals.N1
-    N2=globals.N2
+    N1=params.N1
+    N2=params.N2
     # extract components
     F1x,F1y,F1z=F1
     F2x,F2y,F2z=F2
@@ -150,7 +160,7 @@ def add_forces(F1,F2,F3,F4):
     ax[-1,-1]=-F2x[-1,-1]-F4x[-1,-1]
     ay[-1,-1]=-F2y[-1,-1]-F4y[-1,-1]
     az[-1,-1]=-F2z[-1,-1]-F4z[-1,-1]
-    if globals.net_geometry=='cage':        # attach end to beginning
+    if params.net_geometry=='cage':        # attach end to beginning
         # first column:
         #   :     |         |                Later on, (total) accelerations on
         # ~~0  +  0--  =  ~~0--              last colum are set as in first column
@@ -161,14 +171,14 @@ def add_forces(F1,F2,F3,F4):
     return ax,ay,az
 
 def a(x,y,z,vx,vy,vz):
-    k1=globals.k1
-    k2=globals.k2
-    l1=globals.l1
-    l2=globals.l2
-    l3=globals.l3
-    l4=globals.l4
-    c=globals.c
-    m=globals.m
+    k1=params.k1
+    k2=params.k2
+    l1=params.l1
+    l2=params.l2
+    l3=params.l3
+    l4=params.l4
+    c=params.c
+    m=params.m
     # preliminaries
     xyz1,xyz2,xyz3,xyz4=neighbor_info(x,y,z)            # xyz3 and xyz4 are transposed for convenience
     vxyz1,vxyz2,vxyz3,vxyz4=neighbor_info(vx,vy,vz)     # vxyz3 and vxyz4 are transposed for convenience
@@ -191,7 +201,7 @@ def a(x,y,z,vx,vy,vz):
     # acceleration due to interaction with neighbors
     ax,ay,az=add_forces(F1,F2,F3,F4)
     # add drag and lift forces
-    if globals.add_hydroForce:
+    if params.add_hydroForce:
         Fdx,Fdy,Fdz,Flx,Fly,Flz=hydrodynamic_force(x,y,z,vx,vy,vz)
         ax+=Fdx+Flx
         ay+=Fdy+Fly
@@ -201,14 +211,17 @@ def a(x,y,z,vx,vy,vz):
     ay=ay/m
     az=az/m
     # add gravitational acceleration
-    if globals.add_gravityForce:
+    if params.add_gravityForce:
         ay+=-9.8
-    if globals.net_geometry=='cage':            # set (total) accelerations on last column as in first column
+    if params.net_geometry=='cage':            # set (total) accelerations on last column as in first column
        ax[:,-1]=ax[:,0] 
        ay[:,-1]=ay[:,0] 
        az[:,-1]=az[:,0] 
     # constraints
-    # ADD CONSTRAINTS HERE
+    acx,acy,acz=constraint_force(x,y,z,vx,vy,vz,ax,ay,az)
+    ax+=acx
+    ay+=acy
+    az+=acz
     # https://en.wikipedia.org/wiki/Verlet_integration#Constraints
     # https://en.wikipedia.org/wiki/Constraint_(computational_chemistry)
     # add anchors

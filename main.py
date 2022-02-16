@@ -19,7 +19,7 @@ from mpl_toolkits.mplot3d import axes3d
 from matplotlib.colors import LogNorm
 
 # my functions
-import globals
+import params
 from init_conditions import *
 from iterative_methods import *
 from energy import *
@@ -33,26 +33,26 @@ from print_info import *
 start = timeit.default_timer()
 
 if __name__ == "__main__": 
-    globals.initialize() 
-    N1=globals.N1
-    N2=globals.N2
-    tmax=globals.tmax
-    dt=globals.dt
-    see_net=globals.see_net
-    see_hmap=globals.see_hmap
-    method=globals.method
+    params.initialize() 
+    N1=params.N1
+    N2=params.N2
+    tmax=params.tmax
+    dt=params.dt
+    see_net=params.see_net
+    see_hmap=params.see_hmap
+    method=params.method
 
     # print some info
     print_preInfo()
 
     # initial conditions
-    x,y,z,globals.l1,globals.l2,globals.l3,globals.l4=set_positions()
+    x,y,z,params.l1,params.l2,params.l3,params.l4=set_positions()
     vx,vy,vz=set_velocities()
     x0,y0,z0=x,y,z
 
     # visualize elasticity
-    #if globals.see_elasticity: plot_elasticity(globals.k1)
-    if globals.see_elasticity: plot_elasticity(globals.m)
+    #if params.see_elasticity: plot_elasticity(params.k1)
+    if params.see_elasticity: plot_elasticity(params.m)
 
     # movie settings
     nframes=int(tmax/dt)
@@ -140,8 +140,8 @@ if __name__ == "__main__":
             # stop if diverge
             if max(np.sqrt(x*x+y*y+z*z).flatten())>200:
                 print('Solution diverged!')
-                #exit()
-                break
+                exit()
+                #break
 
             # update movie every 200 frames
             if i % 100 == 0:
@@ -149,7 +149,7 @@ if __name__ == "__main__":
                 update_animation(axs1,x,y,z)
                 if see_hmap: hmap.set_data(reference_area(x,y,z)[1])
                 plt.pause(0.001)
-                if globals.mk_movie: writer.grab_frame()
+                if params.mk_movie: writer.grab_frame()
 
             maxChange=calc_posChange(x,y,z,x0,y0,z0)    # change in position
             K,V=calc_energy(x,y,z,vx,vy,vz)             # kinetic and potential energy
@@ -161,9 +161,9 @@ if __name__ == "__main__":
     file1.close()
     file2.close()
 
-    write_continua(x,y,z,globals.l1,globals.l2,globals.l3,globals.l4)
+    write_continua(x,y,z,params.l1,params.l2,params.l3,params.l4)
 
-    damping_ratio=globals.c/2.0/np.sqrt(globals.k1[0,0])    # damping ratio
+    damping_ratio=params.c/2.0/np.sqrt(params.k1[0,0])    # damping ratio
     Ei=K0+V0                                # initial energy
     Ef=K+V                                  # final energy
     Ee=100.0*(Ef-Ei)/Ei                     # percentage error of final energy to initial energy

@@ -1,6 +1,6 @@
 
 import numpy as np
-import globals
+import params
 from io_continua import *
 from useful_scripts import *
 import os.path
@@ -32,8 +32,8 @@ def myinterpolation(x,N1,N2):
     return  x
 
 def read_previous():
-    N1=globals.N1
-    N2=globals.N2
+    N1=params.N1
+    N2=params.N2
     x,y,z,l1,l2,l3,l4=read_continua()
     if np.shape(x)!=(N1+2,N2+2):
         len1,len2=np.shape(x)
@@ -50,26 +50,26 @@ def read_previous():
     return x,y,z,l1,l2,l3,l4
 
 def create_positions():
-    N1=globals.N1
-    N2=globals.N2
-    netY=globals.netY
-    netZ=globals.netZ
+    N1=params.N1
+    N2=params.N2
+    netY=params.netY
+    netZ=params.netZ
     x=np.ones((N1+2,N2+2))
     y=np.ones((N1+2,N2+2))
     z=np.ones((N1+2,N2+2))
     print('Using default initial conditions...')
-    if globals.net_geometry=='panel':
+    if params.net_geometry=='panel':
         x=np.zeros((N1+2,N2+2))
         #lin1=(netY/N1)*mydistspace(0, N1+1, N1+2,0.005)
         #lin2=(netZ/N2)*mydistspace(0, N2+1, N2+2,0.001)
         lin1=(netY/N1)*np.linspace(0, N1+1, N1+2)
         lin2=(netZ/N2)*np.linspace(0, N2+1, N2+2)
         z,y=np.meshgrid(lin2,lin1)
-    if globals.net_geometry=='cage':
+    if params.net_geometry=='cage':
         lin1=(netY/N1)*np.linspace(0, N1+1, N1+2)
         lin2=np.linspace(0, N2+1, N2+2)/(N2+1)
-        linx=globals.radius*np.sin(2.0*np.pi*lin2)
-        linz=globals.radius*(1.0-np.cos(2.0*np.pi*lin2))
+        linx=params.radius*np.sin(2.0*np.pi*lin2)
+        linz=params.radius*(1.0-np.cos(2.0*np.pi*lin2))
         x,na=np.meshgrid(linx,lin1)
         y,na=np.meshgrid(lin1,linx,indexing='ij')
         z,na=np.meshgrid(linz,lin1)
@@ -92,8 +92,8 @@ def set_positions():
     return x,y,z,l1,l2,l3,l4
 
 def set_velocities():
-    N1=globals.N1
-    N2=globals.N2
+    N1=params.N1
+    N2=params.N2
     vx=np.zeros((N1+2,N2+2))
     vy=np.zeros((N1+2,N2+2))
     vz=np.zeros((N1+2,N2+2))
